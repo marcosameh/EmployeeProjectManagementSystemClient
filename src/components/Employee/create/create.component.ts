@@ -29,16 +29,16 @@ export class CreateComponent implements OnInit {
       projects: this.fb.array([]),
     });
 
-    // Add one project by default
+  
     this.addProject();
   }
 
-  // Getter for projects FormArray
+
   get projects(): FormArray {
     return this.employeeForm.get('projects') as FormArray;
   }
 
-  // Add a project to the FormArray
+  
   addProject(): void {
     this.projects.push(
       this.fb.group({
@@ -48,14 +48,14 @@ export class CreateComponent implements OnInit {
     );
   }
 
-  // Remove a project from the FormArray
+ 
   removeProject(index: number): void {
     if (this.projects.length > 1) {
       this.projects.removeAt(index);
     }
   }
 
-  // Submit the form
+ 
   onSubmit(): void {
     if (this.employeeForm.valid) {
       const employeeData = this.employeeForm.value;

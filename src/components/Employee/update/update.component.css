@@ -1,0 +1,14 @@
+.container {
+    max-width: 600px;
+    margin: auto;
+  }
+  
+  .border {
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+  }
+  
+  button i {
+    margin-right: 5px;
+  }
+  
