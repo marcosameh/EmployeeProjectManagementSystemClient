@@ -1,1 +1,86 @@
-<p>create works!</p>
+<div class="container mt-5">
+    <h2 class="text-center mb-4">Create Employee</h2>
+  
+    <form [formGroup]="employeeForm" (ngSubmit)="onSubmit()">
+      <!-- Name -->
+      <div class="form-group mb-3">
+        <label for="name">Name</label>
+        <input
+          type="text"
+          id="name"
+          class="form-control"
+          formControlName="name"
+          placeholder="Enter employee name"
+        />
+        <small *ngIf="employeeForm.get('name')?.invalid && employeeForm.get('name')?.touched" class="text-danger">
+          Name is required
+        </small>
+      </div>
+  
+      <!-- Email -->
+      <div class="form-group mb-3">
+        <label for="email">Email</label>
+        <input
+          type="email"
+          id="email"
+          class="form-control"
+          formControlName="email"
+          placeholder="Enter employee email"
+        />
+        <small *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched" class="text-danger">
+          Valid email is required
+        </small>
+      </div>
+  
+      <!-- Projects -->
+      <div formArrayName="projects">
+        <div *ngFor="let project of projects.controls; let i = index" [formGroupName]="i" class="border p-3 mb-3 rounded">
+          <h5>
+            Project {{ i + 1 }}
+            <button
+              *ngIf="projects.length > 1"
+              type="button"
+              class="btn btn-danger btn-sm float-end"
+              (click)="removeProject(i)"
+            >
+              <i class="fas fa-trash"></i> Remove
+            </button>
+          </h5>
+  
+          <div class="form-group mb-3">
+            <label for="projectName{{ i }}">Project Name</label>
+            <input
+              type="text"
+              id="projectName{{ i }}"
+              class="form-control"
+              formControlName="name"
+              placeholder="Enter project name"
+            />
+          </div>
+  
+          <div class="form-group mb-3">
+            <label for="projectDescription{{ i }}">Project Description</label>
+            <textarea
+              id="projectDescription{{ i }}"
+              class="form-control"
+              formControlName="description"
+              placeholder="Enter project description"
+            ></textarea>
+          </div>
+        </div>
+  
+        <button
+          type="button"
+          class="btn btn-primary"
+          (click)="addProject()">
+          <i class="fas fa-plus"></i> Add Project
+        </button>
+      </div>
+  
+      <!-- Submit Button -->
+      <button type="submit" class="btn btn-success mt-3" [disabled]="employeeForm.invalid">
+        <i class="fas fa-check"></i> Submit
+      </button>
+    </form>
+  </div>
+  
