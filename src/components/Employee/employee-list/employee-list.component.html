@@ -1,1 +1,36 @@
-<p>employee-list works!</p>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Employees</h2>
+    <button class="btn btn-primary mb-3" routerLink="/employee/create">
+        <i class="fas fa-plus"></i> Add New Employee
+    </button>
+        <table class="table table-striped table-hover" datatable [dtOptions]="dtoptions" [dtTrigger]="dtTrigger">
+            <thead class="thead-dark">
+                <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (employee of employees; track employee.id)
+                {
+                <tr>
+                    <td>{{ employee.id }}</td>
+                    <td>{{ employee.name }}</td>
+                    <td>{{ employee.email }}</td>
+                    <td>
+                        <a class="btn btn-success btn-sm me-2" [routerLink]="'/employee/update/' + employee.id">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <button class="btn btn-danger btn-sm" (click)="confirmDelete(employee.id)">
+                            <i class="fas fa-trash"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+                }
+            </tbody>
+        </table>
+   
+ 
+</div>
