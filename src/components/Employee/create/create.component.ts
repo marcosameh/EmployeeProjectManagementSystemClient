@@ -1,9 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import { FormBuilder, FormGroup, FormArray, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, Validators, FormsModule, ReactiveFormsModule, AsyncValidatorFn, AbstractControl, ValidationErrors } from '@angular/forms';
 import { EmployeeService } from '../../../services/employee.service';
 import { ToastrService } from 'ngx-toastr';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { catchError, map, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-create',
@@ -25,7 +26,11 @@ export class CreateComponent implements OnInit {
   ngOnInit(): void {
     this.employeeForm = this.fb.group({
       name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: [
+        '',
+        [Validators.required, Validators.email],
+        [this.emailUniqueValidator(this.employeeService)], // Apply the async validator
+      ],
       projects: this.fb.array([]),
     });
 
@@ -76,5 +81,18 @@ export class CreateComponent implements OnInit {
     } else {
       this.toastr.error('Please fill out the form correctly');
     }
+  }
+
+    emailUniqueValidator(employeeService: EmployeeService, employeeId?: number): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      if (!control.value) {
+        return of(null);
+      }
+  
+      return employeeService.isEmailUnique(control.value, employeeId).pipe(
+        map((isUnique) => (isUnique.data ? null : { emailTaken: true })),
+        catchError(() => of(null)) // Fallback in case of API errors
+      );
+    };
   }
 }

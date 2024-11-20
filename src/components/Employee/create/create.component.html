@@ -30,6 +30,9 @@
         <small *ngIf="employeeForm.get('email')?.invalid && employeeForm.get('email')?.touched" class="text-danger">
           Valid email is required
         </small>
+        <small *ngIf="employeeForm.get('email')?.hasError('emailTaken') && employeeForm.get('email')?.touched" class="text-danger">
+          Email is already taken.
+        </small>
       </div>
   
       <!-- Projects -->

@@ -29,4 +29,8 @@ export class EmployeeService {
   deleteEmployee(id: number): Observable<ApiResponse<boolean>> {
     return this.http.delete<ApiResponse<boolean>>(`${this.apiUrl}/${id}`);
   }
+  isEmailUnique(email: string, employeeId?: number): Observable<ApiResponse<boolean>> {
+    const params = { email, employeeId: employeeId ? employeeId.toString() : '' };
+    return this.http.get<ApiResponse<boolean>>(`${this.apiUrl}/IsEmailUnique`, { params });
+  }
 }
