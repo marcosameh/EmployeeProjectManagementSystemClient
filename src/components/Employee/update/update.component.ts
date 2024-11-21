@@ -3,9 +3,8 @@ import { EmployeeService } from '../../../services/employee.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { EmployeeDto } from '../../../models/EmployeeDto.model';
-import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { ThisReceiver } from '@angular/compiler';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
+import { CommonModule, DatePipe } from '@angular/common';
 import { catchError, map, Observable, of } from 'rxjs';
 
 @Component({
@@ -13,6 +12,7 @@ import { catchError, map, Observable, of } from 'rxjs';
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './update.component.html',
+  providers: [DatePipe],
   styleUrl: './update.component.css'
 })
 export class UpdateComponent implements OnInit {
@@ -25,7 +25,8 @@ export class UpdateComponent implements OnInit {
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private toastr: ToastrService,
-    private fb: FormBuilder
+    private fb: FormBuilder,
+    private datePipe: DatePipe
   ) { }
   ngOnInit(): void {
     this.activatedRoute.paramMap.subscribe((pram) => {
@@ -36,7 +37,7 @@ export class UpdateComponent implements OnInit {
       email: [
         '',
         [Validators.required, Validators.email],
-        [this.emailUniqueValidator(this.employeeService,this.employeeId)], 
+        [this.emailUniqueValidator(this.employeeId)], 
       ],
       projects: this.fb.array([])
     });
@@ -63,6 +64,8 @@ export class UpdateComponent implements OnInit {
                 id:[project.id],
                 name: [project.name, Validators.required],
                 description: [project.description, Validators.required],
+                startDate: [this.formatDateToString(project.startDate), Validators.required],
+                endDate: [this.formatDateToString(project.endDate), [Validators.required, this.endDateValidator()]]
               })
             );
           });
@@ -92,7 +95,7 @@ export class UpdateComponent implements OnInit {
           this.router.navigateByUrl('employee');
         } else {
           this.toastr.error(
-            'An error occurred while fetching employee data',
+            'error',
             res.errors.join(', ')
           );
         }
@@ -110,6 +113,8 @@ export class UpdateComponent implements OnInit {
         id:[0],
         name: ['', Validators.required],
         description: ['', Validators.required],
+        startDate: ['', Validators.required],
+        endDate: ['', [Validators.required, this.endDateValidator()]]
       })
     )
   }
@@ -118,16 +123,32 @@ export class UpdateComponent implements OnInit {
     this.projects.removeAt(index);
   }
 
-  emailUniqueValidator(employeeService: EmployeeService, employeeId?: number): AsyncValidatorFn {
+  emailUniqueValidator(employeeId?: number): AsyncValidatorFn {
     return (control: AbstractControl): Observable<ValidationErrors | null> => {
       if (!control.value) {
         return of(null);
       }
   
-      return employeeService.isEmailUnique(control.value, employeeId).pipe(
+      return this.employeeService.isEmailUnique(control.value, employeeId).pipe(
         map((isUnique) => (isUnique.data ? null : { emailTaken: true })),
         catchError(() => of(null))
       );
     };
+}
+endDateValidator(): ValidatorFn {
+  return (control: AbstractControl): ValidationErrors | null => {
+    const group = control.parent as FormGroup;
+    if (group) {
+      const startDate = group.get('startDate')?.value;
+      const endDate = control.value;
+      if (startDate && endDate && new Date(endDate) <= new Date(startDate)) {
+        return { endDateInvalid: true };
+      }
+    }
+    return null;
+  };
+}
+formatDateToString(date: Date): string | null {
+  return this.datePipe.transform(date, 'yyyy-MM-dd');
 }
 }

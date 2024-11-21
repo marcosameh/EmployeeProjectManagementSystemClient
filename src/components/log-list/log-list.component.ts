@@ -3,13 +3,13 @@ import {DataTablesModule} from 'angular-datatables';
 import { Config } from 'datatables.net';
 import { Subject } from 'rxjs';
 import { ToastrService } from 'ngx-toastr';
-import {Router, RouterLink} from '@angular/router';
+import {Router} from '@angular/router';
 import { AuditLogWithEmployeeDto } from '../../models/AuditLogWithEmployeeDto.model';
 import { LogService } from '../../services/log.service';
 @Component({
   selector: 'app-log-list',
   standalone: true,
-  imports:[DataTablesModule,RouterLink],
+  imports:[DataTablesModule],
   templateUrl: './log-list.component.html',
   styleUrl: './log-list.component.css'
 })

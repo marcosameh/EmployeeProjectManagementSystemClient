@@ -70,6 +70,32 @@
               placeholder="Enter project description"
             ></textarea>
           </div>
+
+          <div class="form-group mb-3">
+            <label for="projectStartDate{{ i }}">Start Date</label>
+            <input
+              type="date"
+              id="projectStartDate{{ i }}"
+              class="form-control"
+              formControlName="startDate"
+            />
+          </div>
+          
+          <div class="form-group mb-3">
+            <label for="projectEndDate{{ i }}">End Date</label>
+            <input
+              type="date"
+              id="projectEndDate{{ i }}"
+              class="form-control"
+              formControlName="endDate"
+            />
+            <small
+              *ngIf="projects.at(i).get('endDate')?.invalid && projects.at(i).get('endDate')?.touched"
+              class="text-danger"
+            >
+              End date must be greater than start date.
+            </small>
+          </div>
         </div>
   
         <button
