@@ -1,4 +1,4 @@
- // CreateEmployeeDto.ts
+
  export interface CreateEmployeeDto {
     name: string;
     email: string;

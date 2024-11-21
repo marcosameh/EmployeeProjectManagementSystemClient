@@ -1,1 +1,29 @@
-<p>log-list works!</p>
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Logs</h2>
+   
+        <table class="table table-striped table-hover" datatable [dtOptions]="dtoptions" [dtTrigger]="dtTrigger">
+            <thead class="thead-dark">
+                <tr>
+                    <th>Employee Name</th>
+                    <th>Action Type</th>
+                    <th>Timestamp</th>
+                    <th>Old Data</th>
+                    <th>New Data</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (log of logs; track log.auditLogId)
+                {
+                <tr>
+                    <td>{{ log.employeeName }}</td>
+                    <td>{{ log.actionTypeName }}</td>
+                    <td>{{ log.timestamp }}</td>
+                    <td>{{ log.oldData }}</td>
+                    <td>{{ log.newData }}</td>
+                </tr>
+                }
+            </tbody>
+        </table>
+   
+ 
+</div>
