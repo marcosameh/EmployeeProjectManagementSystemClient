@@ -29,7 +29,7 @@ export class CreateComponent implements OnInit {
       email: [
         '',
         [Validators.required, Validators.email],
-        [this.emailUniqueValidator(this.employeeService)], // Apply the async validator
+        [this.emailUniqueValidator(this.employeeService)], 
       ],
       projects: this.fb.array([]),
     });
@@ -91,7 +91,7 @@ export class CreateComponent implements OnInit {
   
       return employeeService.isEmailUnique(control.value, employeeId).pipe(
         map((isUnique) => (isUnique.data ? null : { emailTaken: true })),
-        catchError(() => of(null)) // Fallback in case of API errors
+        catchError(() => of(null))
       );
     };
   }

@@ -3,9 +3,10 @@ import { EmployeeService } from '../../../services/employee.service';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ToastrService } from 'ngx-toastr';
 import { EmployeeDto } from '../../../models/EmployeeDto.model';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, AsyncValidatorFn, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ThisReceiver } from '@angular/compiler';
+import { catchError, map, Observable, of } from 'rxjs';
 
 @Component({
   selector: 'app-update',
@@ -32,7 +33,11 @@ export class UpdateComponent implements OnInit {
     });
     this.employeeForm = this.fb.group({
       name: ['', [Validators.required]],
-      email: ['', [Validators.required, Validators.email]],
+      email: [
+        '',
+        [Validators.required, Validators.email],
+        [this.emailUniqueValidator(this.employeeService,this.employeeId)], 
+      ],
       projects: this.fb.array([])
     });
     this.getEmployee();
@@ -112,4 +117,17 @@ export class UpdateComponent implements OnInit {
   removeProject(index: number) {
     this.projects.removeAt(index);
   }
+
+  emailUniqueValidator(employeeService: EmployeeService, employeeId?: number): AsyncValidatorFn {
+    return (control: AbstractControl): Observable<ValidationErrors | null> => {
+      if (!control.value) {
+        return of(null);
+      }
+  
+      return employeeService.isEmailUnique(control.value, employeeId).pipe(
+        map((isUnique) => (isUnique.data ? null : { emailTaken: true })),
+        catchError(() => of(null))
+      );
+    };
+}
 }
